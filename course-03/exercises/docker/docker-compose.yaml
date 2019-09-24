@@ -1,0 +1,42 @@
+version: "3"
+services:
+  reverseproxy:
+      image: akapula/reverseproxy
+      ports:
+          - 8080:8080
+      restart: always
+      depends_on:
+        - backend-user
+        - backend-feed     
+  backend-user:
+    image: akapula/udacity-restapi-user
+    volumes:
+      - $HOME/.aws:/root/.aws
+    environment:
+      POSTGRESS_USERNAME: udagramkapuladev
+      POSTGRESS_PASSWORD: udagramkapuladev
+      POSTGRESS_DB: udagramkapuladev
+      POSTGRESS_HOST: udagramkapuladev.cufw7brhsxxp.us-east-1.rds.amazonaws.com
+      AWS_REGION: us-east-1
+      AWS_PROFILE: default
+      AWS_BUCKET: udagram-kapula-dev
+      JWT_SECRET: hello_world
+      URL: "http://localhost:8100"
+  backend-feed:
+    image: akapula/udacity-restapi-feed
+    volumes:
+      - $HOME/.aws:/root/.aws
+    environment:
+      POSTGRESS_USERNAME: udagramkapuladev
+      POSTGRESS_PASSWORD: udagramkapuladev
+      POSTGRESS_DB: udagramkapuladev
+      POSTGRESS_HOST: udagramkapuladev.cufw7brhsxxp.us-east-1.rds.amazonaws.com
+      AWS_REGION: us-east-1
+      AWS_PROFILE: default
+      AWS_BUCKET: udagram-kapula-dev
+      JWT_SECRET: hello_world
+      URL: "http://localhost:8100"
+  frontend:
+    image: akapula/udacity-frontend:local
+    ports:
+      - "8100:80"
